@@ -1,0 +1,10 @@
+services:
+  todo:
+    build:
+      context: .
+    restart: on-failure
+    ports:
+      - 8080:8080
+
+volumes:
+  db:

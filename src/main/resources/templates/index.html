@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="widht=device=width, initial-scale=1"
+    </head>
+    <body>
+        <div>
+            <h1>
+                Spring Boot Todo Application
+            </h1>
+            <hr/>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Actions</th>
+                        <th>Id</th>
+                        <th>Is Complete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${Todo}">
+                        <td>&nbsp;</td>
+                        <td th:text="${item.id}"></td>
+                        <td th:text="${item.description}"></td>
+                        <td>
+                            <span th:if="${item.completed} == true" th:text="Yes"/>
+                            <span th:unless="${item.completed} == true" th:text="No"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>
