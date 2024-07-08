@@ -1,12 +1,10 @@
 package com.example.todo.gateways.http;
 
 import com.example.todo.domain.Todo;
-import com.example.todo.gateways.http.DTO.TodoResponseDTO;
-import com.example.todo.useCases.AddTask;
-import com.example.todo.useCases.UpdateTask;
-import com.example.todo.useCases.GetTask;
-import com.example.todo.useCases.RemoveTask;
-import io.swagger.v3.oas.annotations.Operation;
+import com.example.todo.gateways.http.DTO.TodoRequestDTO;
+import com.example.todo.useCases.Todo.AddTodo;
+import com.example.todo.useCases.Todo.GetTodo;
+import com.example.todo.useCases.Todo.RemoveTodo;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -19,55 +17,46 @@ import java.util.List;
 @RequestMapping(path = "/todo")
 public class TodoController {
 
-    private final GetTask getTask;
-    private final AddTask addTask;
-    private final UpdateTask updateTask;
-    private final RemoveTask removeTask;
+    private final GetTodo getTodo;
+    private final AddTodo addTodo;
+    private final RemoveTodo removeTodo;
 
     @Autowired
-    public TodoController(GetTask getTask,
-                          AddTask addTask,
-                          UpdateTask updateTask,
-                          RemoveTask removeTask) {
-        this.getTask = getTask;
-        this.addTask = addTask;
-        this.updateTask = updateTask;
-        this.removeTask = removeTask;
+    public TodoController(GetTodo getTodo,
+                          AddTodo addTodo,
+                          RemoveTodo removeTodo) {
+        this.getTodo = getTodo;
+        this.addTodo = addTodo;
+        this.removeTodo = removeTodo;
     }
 
-    @Operation(description = "" )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                        description = "Returns all Tasks."),
+                    description = "Returns Todo."),
     })
-    @GetMapping(path = "tasks")
-    public List<TodoResponseDTO> getTasks(){
-        return getTask.execute();
+    @GetMapping
+    public List<Todo> getTodo(){
+        return getTodo.execute();
     }
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201",
-                    description = "Returns a new Todo List, adding a new task.")
+                    description = "Returns a new or updated Todo List.")
     })
-    @PostMapping(path = "tasks")
-    public TodoResponseDTO saveProduct(@Valid @RequestBody final TodoResponseDTO task) {
-        return addTask.execute(task);
-    }
-
-    @PutMapping(path = "tasks/{id}")
-    public TodoResponseDTO updateProduct(@Valid @RequestBody final TodoResponseDTO task, @PathVariable Long id) {
-        return updateTask.execute(id, task);
+    @PostMapping(path = "/{todoId}")
+    public Todo saveTask(@PathVariable String todoId, @Valid @RequestBody final TodoRequestDTO todo) {
+        return addTodo.execute(todoId, todo);
     }
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "Task was successfully deleted."),
+                    description = "Todo was successfully deleted."),
             @ApiResponse(responseCode = "404",
-                    description = "Task was not found.")
+                    description = "Todo was not found.")
     })
-    @DeleteMapping(path = "tasks/remove/{id}")
-    public String removeProduct(@PathVariable final Long id){
-        removeTask.execute(id);
-        return("Product deleted");
+    @DeleteMapping(path = "/{todoId}")
+    public String removeTodo(@PathVariable String todoId){
+        removeTodo.execute(todoId);
+        return("Todo deleted");
     }
 }

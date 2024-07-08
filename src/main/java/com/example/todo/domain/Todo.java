@@ -1,30 +1,42 @@
 package com.example.todo.domain;
 
-import com.example.todo.gateways.http.DTO.TodoResponseDTO;
-import jakarta.persistence.*;
+import com.example.todo.gateways.http.DTO.TodoRequestDTO;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import java.io.Serializable;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
-@Entity
-public class Todo implements Serializable {
+@Document
+public class Todo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String todoId;
     private String description;
     private Boolean completed;
+    private List<Task> tasks = new ArrayList<>();
 
-
-    public Todo(Todo task, long id){
-        this.description = task.getDescription();
-        this.completed = task.getCompleted();
-        this.id = id;
+    public Todo(Task task){
+        this.tasks = new ArrayList<>();
+        this.tasks.add(task);
     }
 
-    public Todo(TodoResponseDTO task){
-        this.description = task.getDescription();
-        this.completed = task.getCompleted();
+    public Todo(String todoId){
+        this.todoId = todoId;
+        this.completed = false;
+        this.tasks = new ArrayList<>();
     }
+
+    public Todo(TodoRequestDTO todo, String todoId){
+        this.todoId = todoId;
+        this.description = todo.getDescription();
+        this.completed = todo.getCompleted();
+        this.tasks = new ArrayList<>();
+        this.tasks.addAll(todo.getTasks());
+    }
+
     public Todo(){}
 }
